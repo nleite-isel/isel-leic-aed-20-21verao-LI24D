@@ -2,9 +2,18 @@ package aula15
 
 // ANTES - Tipo agregado com metodos de extensao
 
-//data class IntStackArray1(val stack: IntArray, var n: Int = 10) // n has a default value of 10
+//data class EmptyConstructorDataClass() // Error, data class must have at least an empty primary constructor
+
+///*data*/ class EmptyConstructorDataClass1 {} // OK, we are using a class now (not a data class)
+
+
+
+//data class IntStackArray1 constructor(val stack: IntArray, var n: Int = 10) // n has a default value of 10
+//data class IntStackArray1 (val stack: IntArray, var n: Int = 10) // n has a default value of 10,
+// "constructor" keyword is optional
+
 //
-//fun IntStackArray.push(item: Int) {
+//fun IntStackArray1.push(item: Int) {
 //    if (n < stack.size) {
 //        stack[n] = item
 //        ++n
@@ -12,7 +21,8 @@ package aula15
 //}
 
 // AGORA:
-class IntStackArray1(capacity: Int) { // Parametros do construtor
+//class IntStackArray1(capacity: Int) { // Parametros do construtor primário (construtor primário é opcional)
+class IntStackArray1 constructor (capacity: Int) { // Parametros do construtor primário (construtor primário é opcional)
     // Campos ou atributos
     ///*private*/ val stack: IntArray = IntArray(capacity)
     /*private*/ val stack: IntArray
@@ -34,11 +44,13 @@ class IntStackArray1(capacity: Int) { // Parametros do construtor
         return stack[n]
     }
 
-    // Constructor
+    // Constructor primário
     init {
         stack = IntArray(capacity)
         n = 0
     }
+    // Outros construtores (secundários) usam a keyword constructor
+    //...
 }
 
 
