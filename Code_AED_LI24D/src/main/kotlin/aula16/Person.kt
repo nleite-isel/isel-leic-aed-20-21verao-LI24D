@@ -1,21 +1,15 @@
 package aula16
 
-//data class Person constructor(val name: String)  // constructor keyword is optional
-
 // COMMENT / UNCOMMENT
-//data class Person1 constructor(val name: String) { // constructor keyword is optional
-/*data*/ class Person1 constructor(val name: String) { // Primary constructor; parameters will generate fields/properties
-
-//    val personName: String // This field is not needed because primary constructor already defines a "name" field
-//    val age: Int // Error, age must be var because is rewritten in the secondary constructor
+data class Person constructor(val name: String) {
+///*data*/ class Person constructor(val name: String) { // Primary constructor; parameters will generate fields/properties
 
     var personName: String // This field is not needed because primary constructor already defines a "name" field
     var age: Int
 
     init { // Initializer
-        println("Initializer")
         personName = name
-        age = -1 // age should be passed in the primary constructor
+        age = -1
     }
 
     // Secondary constructor
@@ -23,25 +17,19 @@ package aula16
     constructor(age: Int, personName: String) : this(personName) {
         // We need to add an "age" field and copy the constructor parameter to it
         this.age = age
-//        this.personName = personName
     }
 
 }
 
 
 fun main() {
-    // Using data class without methods and fields
 //    val person = Person("Luis") // calls Primary constructor
-//    println(person)
-//    println(person.name)
+    val person = Person(39, "Luis") // calls Secondary constructor
 
-//    val person1 = Person1("Luis") // calls Primary constructor
-    val person1 = Person1(39, "Luis") // calls Secondary constructor
-
-    println(person1)
-    println(person1.name)
-    println(person1.personName)
-    println(person1.age)
+    println(person)
+    println(person.name)
+    println(person.personName)
+    println(person.age)
 }
 
 /*

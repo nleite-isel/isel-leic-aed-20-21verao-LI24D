@@ -1,5 +1,7 @@
 package aula16
 
+import kotlin.Comparator
+
 /*
 From Chapter 17: Interfaces, Kotlin Apprentice (Second Edition) Beginning Programming with Kotlin by Irina Galata, Joe Howard, Ellen Shapiro
 
@@ -69,8 +71,7 @@ class VehicleOptionalDirection : Vehicle, OptionalDirectionalVehicle {
 
 interface SpaceVehicle {
     fun accelerate()
-//    fun stop()
-    fun stop() {  // Default implementation inherited by the implementing class
+    fun stop() {
         println("Whoa, slow down!")
     }
 }
@@ -89,7 +90,7 @@ class LightFreighter: SpaceVehicle {
 // Properties in interfaces
 // You can also define properties in an interface:
 interface VehicleProperties {
-    val weight: Int // abstract property
+    val weight: Int // abstract
     val name: String  // Getter property
         get() = "Vehicle"
 }
@@ -116,6 +117,7 @@ class Tank: VehicleProperties {
 
 //////////////////////////////////////////
 
+
 // Comparable
 // Comparable declares an operator function used to compare an instance to other
 // instances.
@@ -132,23 +134,61 @@ interface SizedVehicle {
 // You can make Boat implement SizedVehicle and also conform to Comparable :
 class Boat: SizedVehicle, Comparable<Boat> {
     override var length: Int = 0
+
     override fun compareTo(other: Boat): Int {
         return when {
-            length > other.length -> 1
+            this.length > other.length -> 1
             length == other.length -> 0
             else -> -1
         }
+        // Equivalent to
+//        return this.length.compareTo(other.length)
+        // If we want to order in the reversed order
+//        return -this.length.compareTo(other.length)
+    }
+
+    override fun toString(): String {
+        return length.toString()
+    }
+
+}
+
+// Reversed order
+//class Boat: SizedVehicle, Comparable<Boat> {
+//    override var length: Int = 0
+//
+//    override fun compareTo(other: Boat): Int {
+//        return -this.length.compareTo(other.length)
+//    }
+//}
+
+//public interface Comparator<in T> {
+//    public fun compare(elem1: T, elem2: T): Int
+//}
+
+class BoatComparator: Comparator<Boat> {
+    override fun compare(elem1: Boat, elem2: Boat): Int {
+        return when {
+            elem1.length > elem2.length -> 1
+            elem1.length == elem2.length -> 0
+            else -> -1
+        }
+        // Equivalent to
+//        return elem1.length.compareTo(elem2.length)
     }
 }
 
-// The implementation of compareTo returns an Int indicating the relative size of two
-// boats based on their lengths.
-// You can then compare the sizes of two boats using operators such as >:
-//val titanic = Boat()
-//titanic.length = 883
-//val qe2 = Boat()
-//qe2.length = 963
-//println(titanic > qe2) // > false
+class BoatComparatorReversedOrder: Comparator<Boat> {
+    override fun compare(elem1: Boat, elem2: Boat): Int {
+        return when {
+            elem1.length > elem2.length -> -1
+            elem1.length == elem2.length -> 0
+            else -> 1
+        }
+        // Equivalent to
+//        return -elem1.length.compareTo(elem2.length)
+    }
+}
 
 
 class MotorBike : Vehicle {
@@ -169,12 +209,12 @@ fun main() {
 
 //    val unicycle: Unicycle = Unicycle() // OK
 //    val unicycle: Vehicle = Unicycle() // Also OK, an unicycle is a Vehicle also
-//
+
 //    unicycle.accelerate()
 //    unicycle.stop()
 
-    // Advantages of using interfaces
-    // GTA - Grand Theft Auto
+//    // Advantages of using interfaces
+//    // GTA - Grand Theft Auto
 //    var gtaVehicle: Vehicle
 //    gtaVehicle = Unicycle() // Set to Unicycle
 //    gtaVehicle.accelerate()
@@ -186,20 +226,9 @@ fun main() {
 
     //////////////////////////////////////////
 
-    // 1.
 //    val car = VehicleOptionalDirection()
-//    val car: VehicleOptionalDirection = VehicleOptionalDirection()
 //    car.turn() // > LEFT
 //    car.turn(Direction.RIGHT) // > RIGHT
-
-    // 2.
-//    val car: Vehicle = VehicleOptionalDirection()
-////    car.turn() // Error, because car is of type Vehicle, which don't has method turn
-//    car.accelerate() // OK, is from Vehicle
-
-    // 3.
-//    val car: OptionalDirectionalVehicle = VehicleOptionalDirection()
-//    car.turn() // OK
 
     //////////////////////////////////////////
     // Default method implementations
@@ -207,25 +236,46 @@ fun main() {
 //    val falcon = LightFreighter()
 //    falcon.accelerate() // > Proceed to hyperspace!
 //    falcon.stop() // > "Whoa, slow down!"    or  "Override stop"
-
-
-    var myVehicleProperties: VehicleProperties
-
-    myVehicleProperties = Car()
-    println(myVehicleProperties.name) // "Vehicle"
-    println(myVehicleProperties.weight) // 1000
-
-    myVehicleProperties = Tank()
-    println(myVehicleProperties.name) // "Tank"
-    println(myVehicleProperties.weight) // 10000
-
-//    //////////////////////////////////////////
 //
-//    val titanic = Boat()
-//    titanic.length = 883
-//    val qe2 = Boat()
-//    qe2.length = 963
+
+//    var myVehicleProperties: VehicleProperties
+//
+//    myVehicleProperties = Car()
+//    println(myVehicleProperties.name)
+//    println(myVehicleProperties.weight)
+//
+//    myVehicleProperties = Tank()
+//    println(myVehicleProperties.name)
+//    println(myVehicleProperties.weight)
+
+    //////////////////////////////////////////
+
+    val titanic = Boat()
+    titanic.length = 883
+    val qe2 = Boat()
+    qe2.length = 963
 //    println(titanic > qe2) // > false
+//    println(titanic.compareTo(qe2)) // > -1
+
+    // If we exchange order inside compareTo (reversed order):
+//    println(titanic > qe2) // > true
+//    println(titanic.compareTo(qe2)) // > 1
+
+    val cmp = BoatComparator()
+    println(cmp.compare(titanic, qe2))
+
+    val cmpReversed = BoatComparatorReversedOrder()
+    println(cmpReversed.compare(titanic, qe2))
+
+    val array: Array<Boat> = Array<Boat>(2, { i -> Boat() })
+    array[0] = titanic
+    array[1] = qe2
+
+    println(array.asList())
+
+    array.sortWith(cmpReversed) // Sorts in decreasing order
+    println(array.asList())
+
 }
 
 
